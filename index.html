@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório Diário de Atividades - Equipe</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        textarea {
+            resize: vertical;
+            height: 90px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #0b1d33;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #16325c;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>📝 Relatório Diário de Atividades</h2>
+    <form id="formRelatorio">
+        
+        <div class="form-group">
+            <label for="nome">Nome do Servidor:</label>
+            <input type="text" id="nome" name="nome" required placeholder="Digite seu nome completo">
+        </div>
+
+        <div class="form-group">
+            <label for="email">E-mail Institucional:</label>
+            <input type="email" id="email" name="email" required placeholder="seu.email@orgao.gov.br">
+        </div>
+
+        <div class="form-group">
+            <label for="data">Data de Referência:</label>
+            <input type="date" id="data" name="data" required>
+        </div>
+
+        <div class="form-group">
+            <label for="entregas">Principais Entregas / Atividades Concluídas no Dia:</label>
+            <textarea id="entregas" name="entregas" required placeholder="Descreva o que foi finalizado hoje..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="andamento">Demandas em Andamento:</label>
+            <textarea id="andamento" name="andamento" placeholder="O que ficou iniciado ou pendente para os próximos dias..."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="observacao">Observação (Gargalos / Alertas):</label>
+            <textarea id="observacao" name="observacao" placeholder="Houve algum entrave técnico ou ponto de atenção?"></textarea>
+        </div>
+
+        <button type="submit">Enviar Relatório</button>
+    </form>
+</div>
+
+</body>
+</html>
