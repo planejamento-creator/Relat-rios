@@ -111,7 +111,7 @@
       font-weight: 700;
       text-transform: uppercase;
     }
-    .input-group input, .input-group textarea {
+    .input-group input, .input-group textarea, .input-group select {
       width: 100%;
       padding: 13px 16px;
       border: 1.5px solid #cbd5e1;
@@ -122,11 +122,12 @@
       outline: none;
       font-family: inherit;
     }
-    .input-group input:focus, .input-group textarea:focus {
+    .input-group input:focus, .input-group textarea:focus, .input-group select:focus {
       border-color: #134074;
       background-color: #ffffff;
       box-shadow: 0 0 0 4px rgba(19, 64, 116, 0.1);
     }
+    .input-group input[readonly] { background-color: #eef2f7; color: #475569; cursor: not-allowed; }
     .input-group textarea { resize: vertical; height: 100px; }
 
     .btn-submit {
@@ -143,7 +144,6 @@
       box-shadow: 0 6px 15px rgba(11, 37, 69, 0.2);
     }
     .btn-submit:hover { background: linear-gradient(135deg, #134074 0%, #1d2d44 100%); }
-    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
 
     .footer {
       margin-top: 30px;
@@ -177,12 +177,14 @@
       <form id="report-form" onsubmit="iniciarContagemRegressiva(event)">
         <div class="input-group">
           <label for="nome">Nome do Servidor / Membro</label>
-          <input type="text" id="nome" name="nome" placeholder="Digite o seu nome completo" required>
+          <select id="nome" name="nome" required>
+            <option value="" disabled selected>Carregando equipe...</option>
+          </select>
         </div>
 
         <div class="input-group">
           <label for="email">E-mail Institucional</label>
-          <input type="email" id="email" name="email" placeholder="nome@mpma.mp.br" required>
+          <input type="email" id="email" name="email" placeholder="Preenchido ao escolher o nome" readonly required>
         </div>
 
         <div class="input-group">
@@ -218,8 +220,24 @@
     // URL do Web App (implantação do Apps Script, terminada em /exec)
     const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbxGQ_wsI_PTa-U6KQsA2Eh4TwUrmHuC3lEBzdA10ACKENIO_Ad2NuVO4vbA9bblAGE/exec";
 
+    // Lista reserva: usada só se a aba "Equipe" da planilha não puder ser carregada
+    const EQUIPE_RESERVA = [
+      { nome: "Jaqueline Sousa de Freitas", email: "jaquelinefreitas@mpma.mp.br" },
+      { nome: "Guilherme Ferre da Silva", email: "guilhermeferre@mpma.mp.br" },
+      { nome: "Samyr Cutrim", email: "samyrcutrim@mpma.mp.br" },
+      { nome: "Claudio Marcelo Araujo Amorim", email: "marcelo.amorim@mpma.mp.br" },
+      { nome: "Ana Beatriz Vieira", email: "anavieira@mpma.mp.br" },
+      { nome: "Hafiza Dourado Teixeira", email: "hafizateixeira@mpma.mp.br" },
+      { nome: "Andre Maciel", email: "andremaciel@mpma.mp.br" },
+      { nome: "Natália Cardoso Xavier Dutra", email: "nataliacx@mpma.mp.br" },
+      { nome: "Jakeline Sandes Veloso", email: "jakelineveloso@mpma.mp.br" },
+      { nome: "Vivian Siqueira da Rosa", email: "vivian.rosa@mpma.mp.br" },
+      { nome: "Rita de Cassia Maia Baptista", email: "ritabaptista@mpma.mp.br" }
+    ];
+
     let temporizador = null;
     let segundos = 6;
+    let equipeAtual = [];
 
     function mostrar(id, texto) {
       ['success-alert', 'error-alert', 'sending-alert'].forEach(function (x) {
@@ -231,6 +249,52 @@
       el.style.display = 'block';
     }
 
+    // ===== Equipe (menu suspenso) =====
+    function preencherEquipe(lista) {
+      equipeAtual = lista.slice().sort(function (a, b) {
+        return a.nome.localeCompare(b.nome, 'pt-BR');
+      });
+      const sel = document.getElementById('nome');
+      sel.innerHTML = '';
+
+      const ph = document.createElement('option');
+      ph.value = '';
+      ph.disabled = true;
+      ph.selected = true;
+      ph.textContent = 'Selecione o seu nome';
+      sel.appendChild(ph);
+
+      equipeAtual.forEach(function (m) {
+        const opt = document.createElement('option');
+        opt.value = m.nome;
+        opt.textContent = m.nome;
+        sel.appendChild(opt);
+      });
+    }
+
+    async function carregarEquipe() {
+      let lista = EQUIPE_RESERVA;
+      try {
+        const r = await fetch(URL_WEBAPP + '?acao=equipe');
+        const j = await r.json();
+        if (j && j.ok && j.equipe && j.equipe.length) lista = j.equipe;
+      } catch (e) {
+        console.warn('Usando a lista reserva da equipe:', e);
+      }
+      preencherEquipe(lista);
+    }
+
+    document.getElementById('nome').addEventListener('change', function () {
+      const nome = this.value;
+      const membro = equipeAtual.find(function (m) { return m.nome === nome; });
+      const campoEmail = document.getElementById('email');
+      campoEmail.value = membro && membro.email ? membro.email : '';
+      campoEmail.readOnly = !!(membro && membro.email); // se não houver e-mail na lista, permite digitar
+    });
+
+    carregarEquipe();
+
+    // ===== Envio =====
     function iniciarContagemRegressiva(event) {
       event.preventDefault();
       mostrar(null);
@@ -300,6 +364,7 @@
             : '';
           mostrar('success-alert', 'Relatório enviado e gravado com sucesso!' + detalhe);
           document.getElementById('report-form').reset();
+          document.getElementById('email').readOnly = true;
           setTimeout(function () { mostrar(null); }, 8000);
         } else {
           mostrar('error-alert', 'O servidor recusou o envio: ' + ((resultado && resultado.erro) || 'erro desconhecido') + '. Seus dados foram mantidos no formulário.');
