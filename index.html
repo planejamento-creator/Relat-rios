@@ -285,7 +285,14 @@
           body: JSON.stringify(dadosForm)
         });
 
-        const resultado = await resposta.json();
+        const texto = await resposta.text();
+        let resultado;
+        try {
+          resultado = JSON.parse(texto);
+        } catch (e) {
+          throw new Error('Resposta inesperada do servidor (HTTP ' + resposta.status + '): ' +
+            texto.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 200));
+        }
 
         if (resultado && resultado.ok) {
           const detalhe = resultado.aba
@@ -299,7 +306,7 @@
         }
       } catch (erro) {
         console.error('Erro no envio:', erro);
-        mostrar('error-alert', 'Não foi possível confirmar o envio. Seus dados foram mantidos no formulário. Verifique a planilha antes de reenviar, para não duplicar.');
+        mostrar('error-alert', 'Falha no envio: ' + (erro && erro.message ? erro.message : erro) + '. Seus dados foram mantidos no formulário. Verifique a planilha antes de reenviar.');
       } finally {
         document.getElementById('btn-submit').style.display = 'block';
       }
