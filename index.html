@@ -172,8 +172,11 @@
 
             <div id="success-alert">Relatório enviado com sucesso!</div>
 
-            <!-- Formulário estruturado -->
-            <form id="report-form" onsubmit="iniciarContagemRegressiva(event)">
+            <!-- Iframe oculto para processar a resposta do Google Apps Script sem recarregar a página -->
+            <iframe name="hidden-iframe" id="hidden-iframe" style="display:none;" onload="verificarEnvioConcluido()"></iframe>
+
+            <!-- Formulário com a nova URL do Web App -->
+            <form id="report-form" method="POST" action="https://script.google.com/macros/s/AKfycbxuLbnvUiNyLglOEL5ziGoxFX5HppEgTGduf1pUd-S4S3vUxD2DaN14hcII96cdKe8/exec" target="hidden-iframe" onsubmit="iniciarContagemRegressiva(event)">
                 
                 <div class="input-group">
                     <label for="nome">Nome do Servidor / Membro</label>
@@ -182,63 +185,4 @@
 
                 <div class="input-group">
                     <label for="email">E-mail Institucional</label>
-                    <input type="email" id="email" name="email" placeholder="nome@mpma.mp.br" required>
-                </div>
-
-                <div class="input-group">
-                    <label for="data">Data de Referência</label>
-                    <input type="date" id="data" name="data" required>
-                </div>
-
-                <div class="input-group">
-                    <label for="entregas">Principais Entregas / Atividades Concluídas no Dia</label>
-                    <textarea id="entregas" name="entregas" placeholder="Descreva detalhadamente as entregas finalizadas..." required></textarea>
-                </div>
-
-                <div class="input-group">
-                    <label for="demandas">Demandas em Andamento</label>
-                    <textarea id="demandas" name="demandas" placeholder="Informe o estado das demandas correntes e prazos..."></textarea>
-                </div>
-
-                <div class="input-group">
-                    <label for="observacao">Observações / Intempéries / Pendências</label>
-                    <textarea id="observacao" name="observacao" placeholder="Registros adicionais relevantes para o setor..."></textarea>
-                </div>
-
-                <button type="submit" id="btn-submit" class="btn-submit">Enviar Relatório</button>
-            </form>
-
-            <div class="footer">
-                Procuradoria Geral da Justiça do Estado do Maranhão - MPMA
-            </div>
-        </div>
-    </div>
-
-    <script>
-        let temporizador = null;
-        let segundos = 6;
-        let formularioPendente = null;
-
-        function iniciarContagemRegressiva(event) {
-            event.preventDefault(); 
-            formularioPendente = event.target;
-
-            const nome = document.getElementById('nome').value;
-            const email = document.getElementById('email').value;
-            const data = document.getElementById('data').value;
-            const entregas = document.getElementById('entregas').value;
-
-            if (!nome || !email || !data || !entregas) {
-                alert('Por favor, preencha todos os campos obrigatórios antes de enviar.');
-                return;
-            }
-
-            document.getElementById('btn-submit').style.display = 'none';
-            document.getElementById('cancel-countdown-box').style.display = 'block';
-            
-            segundos = 6;
-            document.getElementById('segundos-restantes').textContent = segundos;
-
-            temporizador = setInterval(() => {
-                segundos--;
-                document.getElementById('segundos
+                    <input type="email" id="email"
