@@ -159,7 +159,7 @@
 <body>
   <div class="form-card">
     <div class="header-system">
-      <img src="logo-mpma.png" alt="Logo MPMA">
+      <img src="https://zlardiarias.github.io/Relat-rio/logo-mpma.png" alt="Logo MPMA">
       <div class="form-title">Relatório de Atividades Diárias</div>
       <div class="form-subtitle">Secretaria de Planejamento e Gestão - SEPLAG</div>
     </div>
@@ -216,7 +216,7 @@
 
   <script>
     // URL do Web App (implantação do Apps Script, terminada em /exec)
-    const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbx6nbtWZhdRgJfQGsAzPWj0jeQRhXRJP3XmnE5WGpErK6WE_fMZiYaVL2YIiWTjn24/exec";
+    const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbxGQ_wsI_PTa-U6KQsA2Eh4TwUrmHuC3lEBzdA10ACKENIO_Ad2NuVO4vbA9bblAGE/exec";
 
     let temporizador = null;
     let segundos = 6;
@@ -288,9 +288,12 @@
         const resultado = await resposta.json();
 
         if (resultado && resultado.ok) {
-          mostrar('success-alert');
+          const detalhe = resultado.aba
+            ? ' Gravado na aba "' + resultado.aba + '", linha ' + resultado.linha + '.'
+            : '';
+          mostrar('success-alert', 'Relatório enviado e gravado com sucesso!' + detalhe);
           document.getElementById('report-form').reset();
-          setTimeout(function () { mostrar(null); }, 6000);
+          setTimeout(function () { mostrar(null); }, 8000);
         } else {
           mostrar('error-alert', 'O servidor recusou o envio: ' + ((resultado && resultado.erro) || 'erro desconhecido') + '. Seus dados foram mantidos no formulário.');
         }
