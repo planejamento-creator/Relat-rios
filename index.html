@@ -1,307 +1,316 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Relatório de Atividades Diárias - MPMA</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #eef2f7;
-    }
-    .mpma-blue {
-      background-color: #0d3b66;
-    }
-    .mpma-blue-btn {
-      background-color: #0d3b66;
-    }
-    .mpma-blue-btn:hover {
-      background-color: #082848;
-    }
-    .mpma-text-blue {
-      color: #0d3b66;
-    }
-    /* Estilização dos campos de input e textarea */
-    .form-input {
-      border: 1px solid #d1d5db;
-      background-color: #f8fafc;
-      transition: all 0.2s ease-in-out;
-    }
-    .form-input:focus {
-      outline: none;
-      border-color: #0d3b66;
-      background-color: #ffffff;
-      box-shadow: 0 0 0 3px rgba(13, 59, 102, 0.15);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório de Atividades Diárias - SEPLAG</title>
+    <style>
+        :root {
+            --primary-color: #0b2545;
+            --secondary-color: #134074;
+            --accent-color: #8da9c4;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-color: #0b2545;
+            --border-color: #cbd5e1;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(11, 37, 69, 0.1);
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+        }
+
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            border-bottom: 4px solid var(--secondary-color);
+        }
+
+        .logo-container {
+            background-color: white;
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .logo-container img {
+            height: 45px;
+            display: block;
+        }
+
+        .header h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .header p {
+            font-size: 0.8rem;
+            color: var(--accent-color);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        form {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="date"],
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95krem;
+            color: #334155;
+            background-color: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(19, 64, 116, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-submit:active {
+            transform: scale(0.99);
+        }
+
+        .footer-text {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #64748b;
+            padding: 15px 20px;
+            border-top: 1px solid #f1f5f9;
+            background-color: #fafbfc;
+        }
+
+        /* Overlay de Carregamento e Sucesso */
+        #loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(11, 37, 69, 0.85);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+            font-family: inherit;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.3);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border-left-color: white;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #loading-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+    </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-3 sm:p-6">
+<body>
 
-  <div class="w-full max-w-xl bg-white rounded-xl shadow-xl overflow-hidden border border-gray-100 my-4">
-    
-    <!-- Cabeçalho MPMA com a imagem logo-mpma.png -->
-    <div class="mpma-blue p-6 sm:p-8 text-center text-white relative">
-      <div class="inline-flex items-center justify-center bg-white rounded-lg px-5 py-2.5 mb-4 shadow-md">
-        <img 
-          src="logo-mpma.png" 
-          alt="Logo MPMA" 
-          class="h-12 w-auto object-contain"
-          onerror="this.onerror=null; this.src='https://placehold.co/200x60/ffffff/0d3b66?text=MPMA';"
-        />
-      </div>
+    <div class="container">
+        <div class="header">
+            <div class="logo-container">
+                <!-- Certifique-se de que o arquivo logo-mpma.png está na mesma pasta -->
+                <img src="logo-mpma.png" alt="Logo MPMA">
+            </div>
+            <h1>Relatório de Atividades Diárias</h1>
+            <p>Secretaria de Planejamento e Gestão - SEPLAG</p>
+        </div>
 
-      <h1 class="text-lg sm:text-xl font-extrabold tracking-wide uppercase">Relatório de Atividades Diárias</h1>
-      <p class="text-xs sm:text-sm font-semibold text-blue-200 mt-1 uppercase tracking-wider">Secretaria de Planejamento e Gestão - SEPLAG</p>
+        <form id="relatorioForm">
+            <div class="form-group">
+                <label for="nome">Nome do Servidor / Membro</label>
+                <input type="text" id="nome" name="nome" placeholder="Digite o seu nome completo" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">E-mail Institucional</label>
+                <input type="email" id="email" name="email" placeholder="nome@mpma.mp.br" required>
+            </div>
+
+            <div class="form-group">
+                <label for="dataReferencia">Data de Referência</label>
+                <input type="date" id="dataReferencia" name="dataReferencia" required>
+            </div>
+
+            <div class="form-group">
+                <label for="entregas">Principais Entregas / Atividades Concluídas no Dia</label>
+                <textarea id="entregas" name="entregas" placeholder="Descreva detalhadamente as entregas finalizadas..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="demandas">Demandas em Andamento</label>
+                <textarea id="demandas" name="demandas" placeholder="Informe o estado das demandas correntes e prazos..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="observacoes">Observações / Intempéries / Pendências</label>
+                <textarea id="observacoes" name="observacoes" placeholder="Registros adicionais relevantes para o setor..."></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">Enviar Relatório</button>
+        </form>
+
+        <div class="footer-text">
+            Procuradoria Geral de Justiça do Estado do Maranhão - MPMA
+        </div>
     </div>
 
-    <form id="dailyReportForm" class="p-6 sm:p-8 space-y-5" onsubmit="handleSubmit(event)">
-      
-      <!-- 1. NOME DO SERVIDOR / MEMBRO -->
-      <div>
-        <label for="nome" class="block text-xs sm:text-sm font-bold mpma-text-blue uppercase tracking-wide mb-1.5">
-          Nome do Servidor / Membro <span class="text-red-500">*</span>
-        </label>
-        <input 
-          type="text" 
-          id="nome" 
-          name="nome"
-          required 
-          placeholder="Digite o seu nome completo" 
-          class="form-input w-full px-3.5 py-2.5 rounded-lg text-gray-800 text-sm placeholder-gray-400"
-        >
-      </div>
-
-      <!-- 2. E-MAIL INSTITUCIONAL -->
-      <div>
-        <label for="email" class="block text-xs sm:text-sm font-bold mpma-text-blue uppercase tracking-wide mb-1.5">
-          E-mail Institucional <span class="text-red-500">*</span>
-        </label>
-        <input 
-          type="email" 
-          id="email" 
-          name="email"
-          required 
-          placeholder="nome@mpma.mp.br" 
-          class="form-input w-full px-3.5 py-2.5 rounded-lg text-gray-800 text-sm placeholder-gray-400"
-        >
-      </div>
-
-      <!-- 3. DATA DE REFERÊNCIA -->
-      <div>
-        <label for="data" class="block text-xs sm:text-sm font-bold mpma-text-blue uppercase tracking-wide mb-1.5">
-          Data de Referência <span class="text-red-500">*</span>
-        </label>
-        <input 
-          type="date" 
-          id="data" 
-          name="data"
-          required 
-          class="form-input w-full px-3.5 py-2.5 rounded-lg text-gray-700 text-sm"
-        >
-      </div>
-
-      <!-- 4. PRINCIPAIS ENTREGAS / ATIVIDADES CONCLUÍDAS NO DIA -->
-      <div>
-        <label for="entregas" class="block text-xs sm:text-sm font-bold mpma-text-blue uppercase tracking-wide mb-1.5">
-          Principais Entregas / Atividades Concluídas no Dia <span class="text-red-500">*</span>
-        </label>
-        <textarea 
-          id="entregas" 
-          name="entregas"
-          required 
-          rows="3" 
-          placeholder="Descreva detalhadamente as entregas finalizadas..." 
-          class="form-input w-full px-3.5 py-2.5 rounded-lg text-gray-800 text-sm placeholder-gray-400 resize-y"
-        ></textarea>
-      </div>
-
-      <!-- 5. DEMANDAS EM ANDAMENTO -->
-      <div>
-        <label for="demandas" class="block text-xs sm:text-sm font-bold mpma-text-blue uppercase tracking-wide mb-1.5">
-          Demandas em Andamento
-        </label>
-        <textarea 
-          id="demandas" 
-          name="demandas"
-          rows="3" 
-          placeholder="Informe o estado das demandas correntes e prazos..." 
-          class="form-input w-full px-3.5 py-2.5 rounded-lg text-gray-800 text-sm placeholder-gray-400 resize-y"
-        ></textarea>
-      </div>
-
-      <!-- 6. OBSERVAÇÕES / INTEMPÉRIES / PENDÊNCIAS -->
-      <div>
-        <label for="observacoes" class="block text-xs sm:text-sm font-bold mpma-text-blue uppercase tracking-wide mb-1.5">
-          Observações / Intempéries / Pendências
-        </label>
-        <textarea 
-          id="observacoes" 
-          name="observacoes"
-          rows="3" 
-          placeholder="Registros adicionais relevantes para o setor..." 
-          class="form-input w-full px-3.5 py-2.5 rounded-lg text-gray-800 text-sm placeholder-gray-400 resize-y"
-        ></textarea>
-      </div>
-
-      <div class="pt-2">
-        <button 
-          type="submit" 
-          id="submitBtn" 
-          class="w-full mpma-blue-btn text-white font-bold py-3.5 px-4 rounded-lg shadow-md transition-all duration-200 uppercase tracking-wider flex items-center justify-center gap-2"
-        >
-          <span id="btnText">Enviar Relatório</span>
-          <div id="btnSpinner" class="hidden">
-            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-          </div>
-        </button>
-      </div>
-
-      <!-- Alerta de Sucesso -->
-      <div id="successAlert" class="hidden p-4 text-sm text-emerald-800 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center gap-2" role="alert">
-        <svg class="w-5 h-5 text-emerald-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-        </svg>
-        <span class="font-bold">Relatório enviado com sucesso!</span> O registro foi gravado na planilha.
-      </div>
-
-    </form>
-
-    <div class="p-4 border-t border-gray-100 text-center bg-gray-50">
-      <p class="text-xs text-gray-500 font-medium">Procuradoria Geral da Justiça do Estado do Maranhão - MPMA</p>
+    <!-- Tela de Carregamento / Sucesso -->
+    <div id="loading-overlay">
+        <div class="spinner" id="spinner-icon"></div>
+        <div id="loading-text">Enviando relatório...</div>
     </div>
 
-  </div>
+    <script>
+        // SEU LINK DO GOOGLE APPS SCRIPT CONFIGURADO ABAIXO:
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-fNdFNae9QXVlK2iX4FwXV7nRr33YnLQjzPMkosbd03zp-SebwNvcoWqcNDarFZY/exec';
 
-  <script>
-    /*
-      ==================================================================================
-      CÓDIGO GOOGLE APPS SCRIPT (Cole no seu Google Sheets)
-      ==================================================================================
-      1. Na sua planilha do Google, vá no menu: Extensões -> Apps Script
-      2. Apague o código existente e cole o trecho abaixo:
+        const form = document.getElementById('relatorioForm');
+        const overlay = document.getElementById('loading-overlay');
+        const spinner = document.getElementById('spinner-icon');
+        const loadingText = document.getElementById('loading-text');
 
-      function doPost(e) {
-        try {
-          var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-          
-          if (sheet.getLastRow() === 0) {
-            sheet.appendRow([
-              "Data/Hora do Registro", 
-              "Nome do Servidor / Membro", 
-              "E-mail Institucional", 
-              "Data de Referência", 
-              "Principais Entregas", 
-              "Demandas em Andamento", 
-              "Observações"
-            ]);
-          }
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
 
-          var data = JSON.parse(e.postData.contents);
-          
-          sheet.appendRow([
-            new Date(),
-            data.nome || "",
-            data.email || "",
-            data.data || "",
-            data.entregas || "",
-            data.demandas || "",
-            data.observacoes || ""
-          ]);
+            // Exibe a tela de carregamento
+            overlay.style.display = 'flex';
+            spinner.style.display = 'block';
+            loadingText.innerText = "Enviando relatório...";
 
-          return ContentService
-            .createTextOutput(JSON.stringify({ "status": "success" }))
-            .mimeType(ContentService.MimeType.JSON);
+            const formData = {
+                nome: document.getElementById('nome').value,
+                email: document.getElementById('email').value,
+                dataReferencia: document.getElementById('dataReferencia').value,
+                entregas: document.getElementById('entregas').value,
+                demandas: document.getElementById('demandas').value,
+                observacoes: document.getElementById('observacoes').value
+            };
 
-        } catch (error) {
-          return ContentService
-            .createTextOutput(JSON.stringify({ "status": "error", "message": error.toString() }))
-            .mimeType(ContentService.MimeType.JSON);
-        }
-      }
+            const startTime = Date.now();
 
-      3. Clique em "Implantar" -> "Nova implantação".
-      4. Tipo: "App da Web", Quem tem acesso: "Qualquer pessoa" (Anyone).
-      5. Copie a URL do Web App gerada e cole na constante GOOGLE_SCRIPT_URL abaixo.
-      ==================================================================================
-    */
+            // Envio via fetch para o Google Apps Script
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Necessário para requisições externas ao Google Apps Script
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(() => {
+                // Como usamos 'no-cors', garantimos a simulação do tempo mínimo exigido de 5 segundos
+                const elapsedTime = Date.now() - startTime;
+                const remainingTime = Math.max(5000 - elapsedTime, 0);
 
-    // Substitua pelo Link do seu App Web do Google Apps Script
-    const GOOGLE_SCRIPT_URL = "SUA_URL_DO_GOOGLE_APPS_SCRIPT_AQUI";
-
-    // Preenche automaticamente o campo com a data atual ao carregar a página
-    document.addEventListener("DOMContentLoaded", function() {
-      const today = new Date().toISOString().split('T')[0];
-      document.getElementById('data').value = today;
-    });
-
-    async function handleSubmit(event) {
-      event.preventDefault();
-
-      const submitBtn = document.getElementById('submitBtn');
-      const btnText = document.getElementById('btnText');
-      const btnSpinner = document.getElementById('btnSpinner');
-      const successAlert = document.getElementById('successAlert');
-
-      // Oculta alertas anteriores
-      successAlert.classList.add('hidden');
-
-      // Altera estado do botão para 'Enviando...'
-      submitBtn.disabled = true;
-      submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
-      btnText.textContent = "ENVIANDO...";
-      btnSpinner.classList.remove('hidden');
-
-      // Coleta de dados
-      const formData = {
-        nome: document.getElementById('nome').value,
-        email: document.getElementById('email').value,
-        data: document.getElementById('data').value,
-        entregas: document.getElementById('entregas').value,
-        demandas: document.getElementById('demandas').value,
-        observacoes: document.getElementById('observacoes').value
-      };
-
-      try {
-        // Envio caso a URL do Script esteja preenchida
-        if (GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL !== "SUA_URL_DO_GOOGLE_APPS_SCRIPT_AQUI") {
-          fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-          });
-        }
-
-        // Aguarda exatamente 5 segundos conforme solicitado
-        await new Promise(resolve => setTimeout(resolve, 5000));
-
-        // Exibe feedback de sucesso e reseta formulário
-        successAlert.classList.remove('hidden');
-        document.getElementById('dailyReportForm').reset();
-        document.getElementById('data').value = new Date().toISOString().split('T')[0];
-
-        // Rola até a mensagem de confirmação
-        successAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
-      } catch (error) {
-        console.error("Erro no envio:", error);
-        alert("Ocorreu um erro ao conectar com o servidor. Verifique a sua conexão.");
-      } finally {
-        // Restaura botão
-        submitBtn.disabled = false;
-        submitBtn.classList.remove('opacity-80', 'cursor-not-allowed');
-        btnText.textContent = "ENVIAR RELATÓRIO";
-        btnSpinner.classList.add('hidden');
-      }
-    }
-  </script>
+                setTimeout(() => {
+                    spinner.style.display = 'none';
+                    loadingText.innerText = "Relatório enviado com sucesso!";
+                    
+                    setTimeout(() => {
+                        overlay.style.display = 'none';
+                        form.reset();
+                    }, 2000); // Mantém a mensagem de sucesso por 2 segundos antes de sumir
+                }, remainingTime);
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                spinner.style.display = 'none';
+                loadingText.innerText = "Erro ao enviar. Tente novamente.";
+                
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                }, 3000);
+            });
+        });
+    </script>
 </body>
 </html>
