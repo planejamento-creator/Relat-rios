@@ -128,11 +128,10 @@
       box-shadow: 0 0 0 4px rgba(19, 64, 116, 0.1);
     }
     .input-group input[readonly] { background-color: #eef2f7; color: #475569; cursor: not-allowed; }
-    .input-group textarea { resize: vertical; height: 100px; }
 
-    /* ===== Lista de demandas ===== */
-    .demanda-add { display: flex; gap: 8px; }
-    .demanda-add input { flex: 1; }
+    /* ===== Listas Dinâmicas / Adição ===== */
+    .item-add { display: flex; gap: 8px; }
+    .item-add input { flex: 1; }
     .btn-add {
       width: 52px;
       flex-shrink: 0;
@@ -147,12 +146,12 @@
       box-shadow: 0 4px 10px rgba(11, 37, 69, 0.2);
     }
     .btn-add:hover { background: linear-gradient(135deg, #134074 0%, #1d2d44 100%); }
-    .lista-demandas {
+    .lista-itens {
       list-style: none;
       margin: 10px 0 0 0;
       padding: 0;
     }
-    .lista-demandas li {
+    .lista-itens li {
       display: flex;
       align-items: flex-start;
       gap: 10px;
@@ -164,8 +163,8 @@
       font-size: 14px;
       color: #1d2d44;
     }
-    .lista-demandas .texto { flex: 1; word-break: break-word; }
-    .lista-demandas .num {
+    .lista-itens .texto { flex: 1; word-break: break-word; }
+    .lista-itens .num {
       color: #134074;
       font-weight: 700;
       min-width: 22px;
@@ -244,24 +243,37 @@
           <input type="date" id="data" name="data" required>
         </div>
 
+        <!-- Principais Entregas com botão + -->
         <div class="input-group">
-          <label for="entregas">Principais Entregas / Atividades Concluídas no Dia</label>
-          <textarea id="entregas" name="entregas" placeholder="Descreva detalhadamente as entregas finalizadas..." required></textarea>
+          <label for="entrega-nova">Principais Entregas / Atividades Concluídas no Dia</label>
+          <div class="item-add">
+            <input type="text" id="entrega-nova" placeholder="Digite uma entrega e clique em + (ou aperte Enter)" autocomplete="off">
+            <button type="button" class="btn-add" onclick="adicionarItem('entregas')" title="Adicionar entrega" aria-label="Adicionar entrega">+</button>
+          </div>
+          <ul id="lista-entregas" class="lista-itens"></ul>
+          <small class="dica">Adicione uma entrega por vez. Use o × para remover.</small>
         </div>
 
+        <!-- Demandas em Andamento -->
         <div class="input-group">
           <label for="demanda-nova">Demandas em Andamento</label>
-          <div class="demanda-add">
+          <div class="item-add">
             <input type="text" id="demanda-nova" placeholder="Digite uma demanda e clique em + (ou aperte Enter)" autocomplete="off">
-            <button type="button" class="btn-add" onclick="adicionarDemanda()" title="Adicionar demanda" aria-label="Adicionar demanda">+</button>
+            <button type="button" class="btn-add" onclick="adicionarItem('demandas')" title="Adicionar demanda" aria-label="Adicionar demanda">+</button>
           </div>
-          <ul id="lista-demandas" class="lista-demandas"></ul>
+          <ul id="lista-demandas" class="lista-itens"></ul>
           <small class="dica">Adicione uma demanda por vez. Use o × para remover.</small>
         </div>
 
+        <!-- Observações com botão + -->
         <div class="input-group">
-          <label for="observacao">Observações / Intempéries / Pendências</label>
-          <textarea id="observacao" name="observacao" placeholder="Registros adicionais relevantes para o setor..."></textarea>
+          <label for="observacao-nova">Observações / Intempéries / Pendências</label>
+          <div class="item-add">
+            <input type="text" id="observacao-nova" placeholder="Digite uma observação e clique em + (ou aperte Enter)" autocomplete="off">
+            <button type="button" class="btn-add" onclick="adicionarItem('observacoes')" title="Adicionar observação" aria-label="Adicionar observação">+</button>
+          </div>
+          <ul id="lista-observacoes" class="lista-itens"></ul>
+          <small class="dica">Adicione um registro por vez. Use o × para remover.</small>
         </div>
 
         <button type="submit" id="btn-submit" class="btn-submit">Enviar Relatório</button>
@@ -274,10 +286,8 @@
   </div>
 
   <script>
-    // URL do Web App (implantação do Apps Script, terminada em /exec)
     const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbxGQ_wsI_PTa-U6KQsA2Eh4TwUrmHuC3lEBzdA10ACKENIO_Ad2NuVO4vbA9bblAGE/exec";
 
-    // Lista reserva: usada só se a aba "Equipe" da planilha não puder ser carregada
     const EQUIPE_RESERVA = [
       { nome: "Jaqueline Sousa de Freitas", email: "jaquelinefreitas@mpma.mp.br" },
       { nome: "Guilherme Ferre da Silva", email: "guilhermeferre@mpma.mp.br" },
@@ -295,7 +305,11 @@
     let temporizador = null;
     let segundos = 6;
     let equipeAtual = [];
+    
+    // Arrays para gerenciar os itens dinâmicos
+    let entregasLista = [];
     let demandasLista = [];
+    let observacoesLista = [];
 
     function mostrar(id, texto) {
       ['success-alert', 'error-alert', 'sending-alert'].forEach(function (x) {
@@ -307,14 +321,13 @@
       el.style.display = 'block';
     }
 
-    // ===== Equipe (menu suspenso) =====
     function sincronizarEmail() {
       const nome = document.getElementById('nome').value;
       const membro = equipeAtual.find(function (m) { return m.nome === nome; });
       const campoEmail = document.getElementById('email');
       if (membro) {
         campoEmail.value = membro.email || '';
-        campoEmail.readOnly = !!membro.email; // sem e-mail na lista: permite digitar
+        campoEmail.readOnly = !!membro.email;
       } else {
         campoEmail.value = '';
         campoEmail.readOnly = true;
@@ -342,7 +355,6 @@
         sel.appendChild(opt);
       });
 
-      // O navegador pode restaurar um nome já escolhido ao recarregar a página
       setTimeout(sincronizarEmail, 0);
     }
 
@@ -361,11 +373,13 @@
     document.getElementById('nome').addEventListener('change', sincronizarEmail);
     carregarEquipe();
 
-    // ===== Lista de demandas =====
-    function renderDemandas() {
-      const ul = document.getElementById('lista-demandas');
+    // ===== Função genérica para renderizar listas dinâmicas =====
+    function renderLista(tipo) {
+      const ul = document.getElementById('lista-' + tipo);
+      const lista = tipo === 'entregas' ? entregasLista : (tipo === 'demandas' ? demandasLista : observacoesLista);
       ul.innerHTML = '';
-      demandasLista.forEach(function (texto, i) {
+      
+      lista.forEach(function (texto, i) {
         const li = document.createElement('li');
 
         const num = document.createElement('span');
@@ -380,9 +394,9 @@
         btn.type = 'button';
         btn.className = 'btn-remover';
         btn.title = 'Remover';
-        btn.setAttribute('aria-label', 'Remover demanda ' + (i + 1));
+        btn.setAttribute('aria-label', 'Remover item ' + (i + 1));
         btn.textContent = '×';
-        btn.addEventListener('click', function () { removerDemanda(i); });
+        btn.addEventListener('click', function () { removerItem(tipo, i); });
 
         li.appendChild(num);
         li.appendChild(t);
@@ -391,27 +405,38 @@
       });
     }
 
-    function adicionarDemanda() {
-      const campo = document.getElementById('demanda-nova');
+    function adicionarItem(tipo) {
+      const campoId = tipo === 'entregas' ? 'entrega-nova' : (tipo === 'demandas' ? 'demanda-nova' : 'observacao-nova');
+      const campo = document.getElementById(campoId);
       const texto = campo.value.replace(/\s+/g, ' ').trim();
       if (!texto) { campo.focus(); return; }
-      demandasLista.push(texto);
+
+      if (tipo === 'entregas') entregasLista.push(texto);
+      else if (tipo === 'demandas') demandasLista.push(texto);
+      else observacoesLista.push(texto);
+
       campo.value = '';
-      renderDemandas();
+      renderLista(tipo);
       campo.focus();
     }
 
-    function removerDemanda(i) {
-      demandasLista.splice(i, 1);
-      renderDemandas();
+    function removerItem(tipo, i) {
+      if (tipo === 'entregas') entregasLista.splice(i, 1);
+      else if (tipo === 'demandas') demandasLista.splice(i, 1);
+      else observacoesLista.splice(i, 1);
+      
+      renderLista(tipo);
     }
 
-    // Enter adiciona a demanda (sem enviar o formulário)
-    document.getElementById('demanda-nova').addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        adicionarDemanda();
-      }
+    // Atalho Enter para adicionar em cada campo específico sem enviar o form
+    ['entrega-nova', 'demanda-nova', 'observacao-nova'].forEach(function(id) {
+      document.getElementById(id).addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          const tipo = id.split('-')[0]; // entrega, demanda, observacao
+          adicionarItem(tipo === 'entrega' ? 'entregas' : (tipo === 'demanda' ? 'demandas' : 'observacoes'));
+        }
+      });
     });
 
     // ===== Envio =====
@@ -419,18 +444,17 @@
       event.preventDefault();
       mostrar(null);
 
-      // Se a pessoa digitou uma demanda e não clicou no +, inclui automaticamente
-      if (document.getElementById('demanda-nova').value.trim()) {
-        adicionarDemanda();
-      }
+      // Se houver texto digitado nos inputs que não foi adicionado com +, inclui na hora
+      if (document.getElementById('entrega-nova').value.trim()) adicionarItem('entregas');
+      if (document.getElementById('demanda-nova').value.trim()) adicionarItem('demandas');
+      if (document.getElementById('observacao-nova').value.trim()) adicionarItem('observacoes');
 
       const nome = document.getElementById('nome').value.trim();
       const email = document.getElementById('email').value.trim();
       const data = document.getElementById('data').value;
-      const entregas = document.getElementById('entregas').value.trim();
 
-      if (!nome || !email || !data || !entregas) {
-        alert('Por favor, preencha todos os campos obrigatórios antes de enviar.');
+      if (!nome || !email || !data || entregasLista.length === 0) {
+        alert('Por favor, preencha os campos obrigatórios e adicione pelo menos uma entrega antes de enviar.');
         return;
       }
 
@@ -458,17 +482,14 @@
         nome: document.getElementById('nome').value.trim(),
         email: document.getElementById('email').value.trim(),
         data: document.getElementById('data').value,
-        entregas: document.getElementById('entregas').value.trim(),
-        // Uma demanda por linha, com marcador
+        entregas: entregasLista.map(function (d) { return '• ' + d; }).join('\n'),
         demandas: demandasLista.map(function (d) { return '• ' + d; }).join('\n'),
-        observacao: document.getElementById('observacao').value.trim()
+        observacao: observacoesLista.map(function (d) { return '• ' + d; }).join('\n')
       };
 
       mostrar('sending-alert');
 
       try {
-        // Sem "no-cors": assim conseguimos ler a resposta e confirmar a gravação.
-        // Content-Type text/plain evita a requisição de pré-verificação (preflight) do CORS.
         const resposta = await fetch(URL_WEBAPP, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -490,8 +511,14 @@
             : '';
           mostrar('success-alert', 'Relatório enviado e gravado com sucesso!' + detalhe);
           document.getElementById('report-form').reset();
+          
+          entregasLista = [];
           demandasLista = [];
-          renderDemandas();
+          observacoesLista = [];
+          renderLista('entregas');
+          renderLista('demandas');
+          renderLista('observacoes');
+
           document.getElementById('email').readOnly = true;
           setTimeout(function () { mostrar(null); }, 8000);
         } else {
